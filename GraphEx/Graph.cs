@@ -7,7 +7,7 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace GraphEx
 {
-    public class Node2D : Node<Point> 
+    public class Node2D : Graph<Point> 
     {
         public override string ToString()
         {
@@ -15,7 +15,7 @@ namespace GraphEx
         }
     }
 
-    public class Edge2D : Edge<Node<Point>> 
+    public class Edge2D : Edge<Graph<Point>> 
     {
         public override string ToString()
         {
@@ -24,24 +24,24 @@ namespace GraphEx
 
         public static double CalcDist(Edge2D edge, Func<double, double, double, double, double> distFunc)
         {
-            var start = (Node<Point>)edge.From;
-            var stop = (Node<Point>)edge.To;
+            var start = (Graph<Point>)edge.From;
+            var stop = (Graph<Point>)edge.To;
             return distFunc(start.Id.X, start.Id.Y, stop.Id.X, stop.Id.Y);
         }
     }
 
-    public class Node<TNodeKey>
+    public class Graph<TNodeKey>
     where TNodeKey : IEquatable<TNodeKey>
     {
         public TNodeKey Id { get; set; }
 
         public string Name { get; set; }
 
-        public Dictionary<TNodeKey, Edge<Node<TNodeKey>>> Edges { get; set; }
+        public Dictionary<TNodeKey, Edge<Graph<TNodeKey>>> Edges { get; set; }
 
-        public Node()
+        public Graph()
         {
-            Edges = new Dictionary<TNodeKey, Edge<Node<TNodeKey>>>();
+            Edges = new Dictionary<TNodeKey, Edge<Graph<TNodeKey>>>();
         }
     }
 
@@ -55,8 +55,8 @@ namespace GraphEx
 
     public class Graph<TNodeKey, TNode, TEdge>
     where TNodeKey : IEquatable<TNodeKey>
-    where TNode : Node<TNodeKey>, new()
-    where TEdge : Edge<Node<TNodeKey>>, new()
+    where TNode : Graph<TNodeKey>, new()
+    where TEdge : Edge<Graph<TNodeKey>>, new()
     {
         public Dictionary<TNodeKey, int> NodeIndexes;
 
@@ -202,8 +202,8 @@ namespace GraphEx
             Func<TEdge, double> distFunc, 
             out int[] path)
             where TNodeKey : IEquatable<TNodeKey>
-            where TNode : Node<TNodeKey>, new()
-            where TEdge : Edge<Node<TNodeKey>>, new()
+            where TNode : Graph<TNodeKey>, new()
+            where TEdge : Edge<Graph<TNodeKey>>, new()
         {
 
             var _graph = graph;
@@ -276,8 +276,8 @@ namespace GraphEx
             Func<TEdge, double> finalDistTargetFunc, 
             out int[] path)
             where TNodeKey : IEquatable<TNodeKey>
-            where TNode : Node<TNodeKey>, new()
-            where TEdge : Edge<Node<TNodeKey>>, new()
+            where TNode : Graph<TNodeKey>, new()
+            where TEdge : Edge<Graph<TNodeKey>>, new()
         {
             var _graph = graph;
 

@@ -12,11 +12,11 @@ namespace WorldCitiesNet.Models
     //where TNode : Node<TNodeKey>, new ()
     //where TEdge : Edge<Node<TNodeKey>>, new ()
 
-    public class Route : Edge<Node<string>>
+    public class Route : Edge<Graph<string>>
     {
     }
 
-    public class Station : Node<string>
+    public class Station : Graph<string>
     {
         //public string Name; //The full name of the stop, between quote marks"
         public string Desc; //The description of the stop (not used)

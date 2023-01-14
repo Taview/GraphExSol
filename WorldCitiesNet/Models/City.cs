@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace WorldCitiesNet.Models
 {
-    public class City : Node<string>
+    public class City : Graph<string>
     {
         public string city;
         public string city_ascii;
