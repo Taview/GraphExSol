@@ -72,6 +72,39 @@ namespace GraphEx
             IncludeDiagColRow = includeHeaderRowCol;
         }
 
+        public static void RemoveAllAdjacentEdges(Maze2D maze, Point coord)
+        {
+            //Remove edges from all neigbours and add connections again
+            int minXIndex = 0;
+            int maxXIndex = 0;
+
+            minXIndex = Math.Max(0, coord.X - 1);
+            maxXIndex = Math.Min(maze.MazeWidth - 1, coord.X + 1);
+
+            int minYIndex = 0;
+            int maxYIndex = 0;
+
+            minYIndex = Math.Max(0, coord.Y - 1);
+            maxYIndex = Math.Min(maze.MazeHeight - 1, coord.Y + 1);
+
+            for (int yIndex = minYIndex; yIndex <= maxYIndex; yIndex++)
+                for (int xIndex = minXIndex; xIndex <= maxXIndex; xIndex++)
+                {
+                    var from = new Point(xIndex, yIndex);
+                    var to = coord;
+
+                    if (maze.InternalGraph.IsEdgeExist(from, to))
+                    {
+                        maze.InternalGraph.RemoveEdge(from, to);
+                    }
+
+                    if (maze.InternalGraph.IsEdgeExist(to, from))
+                    {
+                        maze.InternalGraph.RemoveEdge(to, from);
+                    }
+                }
+        }
+
         public void InitializeFromAscii(IList<string> mazeRows2D)
         {
             _mazeRows2D = mazeRows2D.ToList();

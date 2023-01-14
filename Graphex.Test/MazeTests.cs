@@ -80,36 +80,7 @@ namespace Graphex.Test
         private void Maze_NodeUpdated(object sender, MazeNodeUpdateEventArgs e)
         {
             Maze2D maze = (Maze2D)sender;
-            //Remove edges from all neigbours and add connections again
-           int minXIndex = 0;
-           int maxXIndex = 0;
-
-            minXIndex = Math.Max(0, e.Coord.X-1);
-            maxXIndex = Math.Min(maze.MazeWidth - 1, e.Coord.X+1);
-
-            int minYIndex = 0;
-            int maxYIndex = 0;
-
-            minYIndex = Math.Max(0, e.Coord.Y - 1);
-            maxYIndex = Math.Min(maze.MazeHeight - 1, e.Coord.Y + 1);
-
-            for (int yIndex = minYIndex; yIndex <= maxYIndex; yIndex++)
-                for (int xIndex = minXIndex; xIndex <= maxXIndex; xIndex++)
-                {
-                    var from = new Point(xIndex, yIndex);
-                    var to = e.Coord;
-
-                    if (maze.InternalGraph.IsEdgeExist(from, to))
-                    {
-                        maze.InternalGraph.RemoveEdge(from, to);
-                    }
-
-                    if (maze.InternalGraph.IsEdgeExist(to, from))
-                    {
-                        maze.InternalGraph.RemoveEdge(to, from);
-                    }
-                }
-
+            Maze2D.RemoveAllAdjacentEdges(maze, e.Coord);
             AddNodeConnections(e.Coord, e.NodeType, (Maze2D)sender);
         }
 
@@ -174,7 +145,7 @@ namespace Graphex.Test
         [TestCase(3, 0, 0, 1, true,  false)] //TestName = "ShouldCreateGraphWithXAxisInvert"
         [TestCase(0, 1, 3, 0, false, true)] //TestName = "ShouldCreateGraphWithYAxisInvert"
         [TestCase(3, 1, 0, 0, true,  true)] //TestName = "ShouldCreateGraphWithX&YAxisInvert"
-        public void ShouldCorrectlyCreateGraphWithAxisInverses(int ax, int ay, int hx, int hy, bool invertXAxis, bool invertYAxis)
+        public void ShouldCorrectlyCreateGraphWithInverseAxes(int ax, int ay, int hx, int hy, bool invertXAxis, bool invertYAxis)
         {
             Maze2D maze = new Maze2D();
             maze.IncludeDiagColRow = true;
