@@ -81,7 +81,7 @@ namespace Graphex.Test
         [Test]
         public void TestDejikstra()
         {
-            var gr = new Graph<int, Graph<int>, Edge<Graph<int>>>(initializeSelfNode: true);
+            var gr = new Graph<int, Node<int>, Edge<Node<int>>>(initializeSelfNode: true);
             gr.AddNode(0);
             gr.AddNode(1);
             gr.AddNode(2);
@@ -159,7 +159,7 @@ namespace Graphex.Test
         [Test]
         public void TestAStarFast()
         {
-            var gr = new Graph<int, Graph<int>, Edge<Graph<int>>>(initializeSelfNode: true);
+            var gr = new Graph<int, Node<int>, Edge<Node<int>>>(initializeSelfNode: true);
             gr.AddNode(0);
             gr.AddNode(1);
             gr.AddNode(2);
@@ -234,7 +234,7 @@ namespace Graphex.Test
 
         }
 
-        private void AddDejikstraEdge(Graph<int, Graph<int>, Edge<Graph<int>>> gr, int from, int to, double dist)
+        private void AddDejikstraEdge(Graph<int, Node<int>, Edge<Node<int>>> gr, int from, int to, double dist)
         {
             var edge = gr.AddEdge(from, to);
             edge.Distance = dist;

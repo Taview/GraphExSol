@@ -7,7 +7,7 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace GraphEx
 {
-    public class Node2D : Graph<Point> 
+    public class Node2D : Node<Point> 
     {
         public override string ToString()
         {
@@ -15,7 +15,7 @@ namespace GraphEx
         }
     }
 
-    public class Edge2D : Edge<Graph<Point>> 
+    public class Edge2D : Edge<Node<Point>> 
     {
         public override string ToString()
         {
@@ -24,24 +24,24 @@ namespace GraphEx
 
         public static double CalcDist(Edge2D edge, Func<double, double, double, double, double> distFunc)
         {
-            var start = (Graph<Point>)edge.From;
-            var stop = (Graph<Point>)edge.To;
+            var start = (Node<Point>)edge.From;
+            var stop = (Node<Point>)edge.To;
             return distFunc(start.Id.X, start.Id.Y, stop.Id.X, stop.Id.Y);
         }
     }
 
-    public class Graph<TNodeKey>
+    public class Node<TNodeKey>
     where TNodeKey : IEquatable<TNodeKey>
     {
         public TNodeKey Id { get; set; }
 
         public string Name { get; set; }
 
-        public Dictionary<TNodeKey, Edge<Graph<TNodeKey>>> Edges { get; set; }
+        public Dictionary<TNodeKey, Edge<Node<TNodeKey>>> Edges { get; set; }
 
-        public Graph()
+        public Node()
         {
-            Edges = new Dictionary<TNodeKey, Edge<Graph<TNodeKey>>>();
+            Edges = new Dictionary<TNodeKey, Edge<Node<TNodeKey>>>();
         }
     }
 
@@ -55,8 +55,8 @@ namespace GraphEx
 
     public class Graph<TNodeKey, TNode, TEdge>
     where TNodeKey : IEquatable<TNodeKey>
-    where TNode : Graph<TNodeKey>, new()
-    where TEdge : Edge<Graph<TNodeKey>>, new()
+    where TNode : Node<TNodeKey>, new()
+    where TEdge : Edge<Node<TNodeKey>>, new()
     {
         public Dictionary<TNodeKey, int> NodeIndexes;
 
@@ -155,6 +155,19 @@ namespace GraphEx
             return newEdge;
         }
 
+        public bool IsEdgeExist(TNodeKey from, TNodeKey to)
+        {
+            TNode fromNode = null;
+            if (NodeIndexes.ContainsKey(from)) { fromNode = Nodes[NodeIndexes[from]]; }
+
+            if (fromNode == null)
+            {
+                return false;
+            }
+
+            return fromNode.Edges.ContainsKey(to);
+        }
+
         public void RemoveEdge(TNodeKey from, TNodeKey to)
         {
             if (!NodeIndexes.ContainsKey(from))
@@ -202,8 +215,8 @@ namespace GraphEx
             Func<TEdge, double> distFunc, 
             out int[] path)
             where TNodeKey : IEquatable<TNodeKey>
-            where TNode : Graph<TNodeKey>, new()
-            where TEdge : Edge<Graph<TNodeKey>>, new()
+            where TNode : Node<TNodeKey>, new()
+            where TEdge : Edge<Node<TNodeKey>>, new()
         {
 
             var _graph = graph;
@@ -276,8 +289,8 @@ namespace GraphEx
             Func<TEdge, double> finalDistTargetFunc, 
             out int[] path)
             where TNodeKey : IEquatable<TNodeKey>
-            where TNode : Graph<TNodeKey>, new()
-            where TEdge : Edge<Graph<TNodeKey>>, new()
+            where TNode : Node<TNodeKey>, new()
+            where TEdge : Edge<Node<TNodeKey>>, new()
         {
             var _graph = graph;
 
