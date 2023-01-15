@@ -12,9 +12,9 @@ namespace WorldCitiesNet
         public static double CalcDistInternal(double lng1, double lat1, double lng2, double lat2)
         {
             double longA = DegToRad(lng1);
-            double longB = DegToRad(lat1);
+            double latA = DegToRad(lat1);
 
-            double latA = DegToRad(lng2);
+            double longB = DegToRad(lng2);
             double latB = DegToRad(lat2);
 
             double x = (longB - longA) * Math.Cos((latA + latB) / 2);

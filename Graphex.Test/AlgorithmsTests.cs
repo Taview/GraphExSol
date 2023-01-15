@@ -63,6 +63,8 @@ namespace Graphex.Test
                 Assert.AreEqual(stationsToValidate[resIndex], nodes[pathIndex].Id);
                 resIndex++;
             }
+
+            Console.WriteLine($"Total Length {Algorithms.GetShortestDistance(distances, secondCity)}");
         }
 
         private static double CalculateGeoDistance(Route route)

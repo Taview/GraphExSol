@@ -368,7 +368,7 @@ namespace Graphex.Test
 
             var nodeList = gr.Nodes;
 
-            int index = 0;
+            //int index = 0;
             if (resPath != null)
             {
                 foreach (var resIndex in resPath)
@@ -417,7 +417,7 @@ namespace Graphex.Test
 
             var nodeList = gr.Nodes;
 
-            int index = 0;
+            //int index = 0;
             if (resPath != null)
             {
                 foreach (var resIndex in resPath)

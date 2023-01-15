@@ -26,7 +26,7 @@ namespace GraphEx
         {
             var start = (Node<Point>)edge.From;
             var stop = (Node<Point>)edge.To;
-            return distFunc(start.Id.X, start.Id.Y, stop.Id.X, stop.Id.Y);
+            return distFunc(start.Id.X, stop.Id.X, start.Id.Y, stop.Id.Y);
         }
     }
 
@@ -314,35 +314,35 @@ namespace GraphEx
             }
             distances[searchIndex] = 0;
             path[searchIndex] = -1;
-            int current = searchIndex;
+            int currentFromNodeIndex = searchIndex;
 
             bool exitCond = false;
             int loops = 0;
             while (!exitCond)
             {
-                visited[current] = true;
-                foreach (var edge in _nodeList[current].Edges.Values)
+                visited[currentFromNodeIndex] = true;
+                foreach (var edge in _nodeList[currentFromNodeIndex].Edges.Values)
                 {
-                    var nextNodeIndex = _nodeIndexes[edge.To.Id];
-                    if (visited[nextNodeIndex])
+                    var toNodeIndex = _nodeIndexes[edge.To.Id];
+                    if (visited[toNodeIndex])
                         continue;
 
-                    var newDist = distances[current] + distFunc((TEdge)edge);
+                    var newDist = distances[currentFromNodeIndex] + distFunc((TEdge)edge);
 
-                    if (newDist < distances[nextNodeIndex])
+                    if (newDist < distances[toNodeIndex])
                     {
-                        distances[nextNodeIndex] = newDist;
-                        path[nextNodeIndex] = current;
+                        distances[toNodeIndex] = newDist;
+                        path[toNodeIndex] = currentFromNodeIndex;
 
                         //Create new EdgeToTarget to estimate its weight/dist foe heuristics
-                        TEdge targetEdge = new TEdge() { From = _nodeList[nextNodeIndex], To = _nodeList[endNodeIndex] };
+                        TEdge targetEdge = new TEdge() { From = _nodeList[toNodeIndex], To = _nodeList[endNodeIndex] };
                         double heuDist = 0;
-                        heuDist = distances[nextNodeIndex] + finalDistTargetFunc((TEdge)targetEdge);
-                        priorityQueue.Enqueue(nextNodeIndex, heuDist);
+                        heuDist = distances[toNodeIndex] + finalDistTargetFunc((TEdge)targetEdge);
+                        priorityQueue.Enqueue(toNodeIndex, heuDist);
                     }
                 }
 
-                while (visited[current])
+                while (visited[currentFromNodeIndex])
                 {
                     if (priorityQueue.Count == 0)
                     {
@@ -352,9 +352,120 @@ namespace GraphEx
                     }
 
                     var resIndex = priorityQueue.Dequeue();
-                    current = resIndex;
+                    currentFromNodeIndex = resIndex;
 
-                    exitCond = current == endNodeIndex;
+                    exitCond = currentFromNodeIndex == endNodeIndex;
+                    if (exitCond)
+                        break;
+                }
+
+                loops += 1;
+            }
+
+            //Console.WriteLine($"loops {loops}");
+            //Console.WriteLine($"Priority queue count {priorityQueue.Count}, exitcond {exitCond}");
+            return distances;
+        }
+
+        public static double[] FindShortestPathAStarFromNodeWithTurnCost<TNodeKey, TNode, TEdge>(
+            int startNodeIndex,
+            int endNodeIndex,
+            Graph<TNodeKey, TNode, TEdge> graph,
+            Func<Graph<TNodeKey, TNode, TEdge>, int, int, int> getDirFunct,
+            Func<int, int, int> dirPenaltyFunct,
+            Func<TEdge, double> distFunc,
+            Func<TEdge, double> finalDistTargetFunc,
+            out int[] directions,
+            out int[] path)
+            where TNodeKey : IEquatable<TNodeKey>
+            where TNode : Node<TNodeKey>, new()
+            where TEdge : Edge<Node<TNodeKey>>, new()
+        {
+            var _graph = graph;
+
+            var _nodeIndexes = _graph.NodeIndexes;
+            int _nodeCount = graph.Nodes.Count;
+            var _nodeList = _graph.Nodes;
+
+            path = new int[_nodeCount];
+            directions = new int[_nodeCount];
+
+            int searchIndex = startNodeIndex;
+
+            PriorityQueue<int, double> priorityQueue = new PriorityQueue<int, double>();
+            double[] distances = new double[_nodeCount];
+            bool[] visited = new bool[_nodeCount];
+
+            for (int index = 0; index < _nodeCount; index++)
+            {
+                visited[index] = false;
+                path[index] = -1;
+                distances[index] = double.PositiveInfinity;
+            }
+            distances[searchIndex] = 0;
+            path[searchIndex] = -1;
+            int currentFromNodeIndex = searchIndex;
+
+            bool exitCond = false;
+            int loops = 0;
+            while (!exitCond)
+            {
+                visited[currentFromNodeIndex] = true;
+                foreach (var edge in _nodeList[currentFromNodeIndex].Edges.Values)
+                {
+                    var toNodeIndex = _nodeIndexes[edge.To.Id];
+                    if (visited[toNodeIndex])
+                        continue;
+
+                    //Lets find previous edge and check its direction
+                    int currentDirection = getDirFunct(graph, currentFromNodeIndex, toNodeIndex);
+
+                    int turnCost = 0;
+                    //Get previous edge if exists
+                    if(path[currentFromNodeIndex] != -1)
+                    {
+                        //Get dir of previous segment
+                        int prevIndex = path[currentFromNodeIndex];
+                        int prevDirection = directions[currentFromNodeIndex];
+
+                        //We assume that agent is moving in the same direction if no change as is
+                        if(currentDirection == 0)
+                        {
+                            currentDirection = prevDirection;
+                        }
+
+                        turnCost = dirPenaltyFunct(currentDirection, prevDirection);
+                    }
+
+                    var newDist = distances[currentFromNodeIndex] + distFunc((TEdge)edge) + turnCost;
+
+                    if (newDist < distances[toNodeIndex])
+                    {
+                        directions[toNodeIndex] = currentDirection;
+                        distances[toNodeIndex] = newDist;
+                        path[toNodeIndex] = currentFromNodeIndex;
+
+                        //Create new EdgeToTarget to estimate its weight/dist foe heuristics
+                        TEdge targetEdge = new TEdge() { From = _nodeList[toNodeIndex], To = _nodeList[endNodeIndex] };
+                        double heuDist = 0;
+                        heuDist = distances[toNodeIndex] + finalDistTargetFunc((TEdge)targetEdge);
+                        priorityQueue.Enqueue(toNodeIndex, heuDist);
+                    }
+                }
+
+                while (visited[currentFromNodeIndex])
+                {
+                    if (priorityQueue.Count == 0)
+                    {
+                        //Console.WriteLine($"loops {loops}");
+                        //Console.WriteLine($"Priority queue count {priorityQueue.Count}, exitcond {exitCond}");
+                        return distances;
+                    }
+
+                    var resIndex = priorityQueue.Dequeue();
+                    currentFromNodeIndex = resIndex;
+
+                    exitCond = currentFromNodeIndex == endNodeIndex;
                     if (exitCond)
                         break;
                 }
@@ -385,6 +496,33 @@ namespace GraphEx
             indexesToFollow.Reverse();
 
             return indexesToFollow;
+        }
+
+        public static List<Tuple<int, int>> GetPathWithDirections(int[] shortestIndexes, int[] directions, int startNode, int endNode)
+        {
+            var direIndexesToFollow = new List<Tuple<int, int>>();
+            int currentPathIndex = endNode;
+            direIndexesToFollow.Add(new Tuple<int, int>(currentPathIndex, directions[currentPathIndex]));
+
+            while (currentPathIndex != startNode)
+            {
+                currentPathIndex = shortestIndexes[currentPathIndex];
+                if (currentPathIndex == -1) return null;
+
+                var res = new Tuple<int, int>(currentPathIndex, directions[currentPathIndex]);
+
+                direIndexesToFollow.Add(res);
+            }
+
+            //We are starting from end point till starting point so order is reversed
+            direIndexesToFollow.Reverse();
+
+            return direIndexesToFollow;
+        }
+
+        public static double GetShortestDistance(double[] distIndexes, int endNodeIndex)
+        {
+            return distIndexes[endNodeIndex];
         }
     }
 

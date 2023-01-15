@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,7 +16,22 @@ namespace GraphEx
 
         public override string ToString()
         {
-            return $"Maze2D([{Id.X},{Id.Y}])";
+            return $"MazeNode2D([{Id.X},{Id.Y}])";
+        }
+    }
+
+    public class MazeEdge2D : Edge2D
+    {
+        public override string ToString()
+        {
+            return $"MazeEdge2D([{From.Id.X},{From.Id.Y}] - [{To.Id.X},{To.Id.Y}])";
+        }
+
+        public static double CalcDist(Edge2D edge, Func<double, double, double, double, double> distFunc)
+        {
+            var start = (Node<Point>)edge.From;
+            var stop = (Node<Point>)edge.To;
+            return distFunc(start.Id.X, stop.Id.X, start.Id.Y, stop.Id.Y);
         }
     }
 
@@ -116,10 +134,10 @@ namespace GraphEx
             {
                 MazeFirstColIndex = 1; 
                 MazeFirstRowIndex = 1;
-
-                MazeWidth = MazeWidth - MazeFirstColIndex;
-                MazeHeight = MazeHeight - MazeFirstRowIndex;
             }
+
+            MazeWidth = MazeWidth - MazeFirstColIndex;
+            MazeHeight = MazeHeight - MazeFirstRowIndex;
 
             InternalGraph = new Graph<Point, MazeNode2D, Edge2D>();
 
@@ -146,13 +164,45 @@ namespace GraphEx
                 }
         }
 
+        public void EnrichWithDebugRowCol()
+        {
+            IList<string> _debugMazeRows2D;
+
+            _debugMazeRows2D = new List<string>();
+
+            var headerDiagRowList = Enumerable.Range(0, MazeWidth).Select(index => (index % 10).ToString()).ToList();
+
+            if (InverseXAxisGraph)
+                headerDiagRowList.Reverse();
+
+            var headerRowStr = $"x{string.Join("", headerDiagRowList)}";
+
+            _debugMazeRows2D.Add(headerRowStr);
+            for (int coordY = 0; coordY < MazeHeight; coordY++)
+            {
+                int yIndex = coordY;
+                if (InverseYAxisGraph)
+                {
+                    yIndex = MazeHeight - coordY;
+                }
+
+                var indexRow = (yIndex % 10).ToString();
+                _debugMazeRows2D.Add($"{indexRow}{_mazeRows2D[coordY]}");
+            }
+
+            _mazeRows2D = _debugMazeRows2D;
+
+            IncludeDiagColRow = true;
+            MazeFirstColIndex = 1;
+            MazeFirstRowIndex = 1;
+
+        }
 
         public void UpdateMaze(Point coord, char mazeType)
         {
             int xCol = coord.X; 
             int yRow = coord.Y;
             var arrayCoord = GetArrayCoords(new Point(xCol, yRow));
-
 
             //update maze string at arrayCoord.X, arrayCoord.Y
             string rowstr = _mazeRows2D[arrayCoord.Y];
@@ -183,12 +233,12 @@ namespace GraphEx
             if (!InverseXAxisGraph)
                 retVal.X = coordPlain.X + MazeFirstColIndex;
             else
-                retVal.X = MazeWidth - coordPlain.X;
+                retVal.X = ( MazeWidth -1) - coordPlain.X + MazeFirstColIndex;
 
             if (!InverseYAxisGraph)
-                retVal.Y = coordPlain.Y + MazeFirstColIndex;
+                retVal.Y = coordPlain.Y + MazeFirstRowIndex;
             else
-                retVal.Y = MazeHeight - coordPlain.Y;
+                retVal.Y = ( MazeHeight-1 ) - coordPlain.Y + MazeFirstRowIndex;
 
             return retVal;
         }
@@ -199,8 +249,50 @@ namespace GraphEx
             int startIndexCol = showDiagInfo ? 0 : MazeFirstColIndex;
 
             var sb = new StringBuilder();
-            for(int yRow = startIndexRow; yRow <= MazeHeight; yRow++)
+            for(int yRow = startIndexRow; yRow < MazeHeight + MazeFirstRowIndex; yRow++)
                 sb.AppendLine(_mazeRows2D[yRow].Substring(startIndexCol));
+
+            return sb.ToString();
+        }
+
+        public string PrintPathOverlay(string baseStr, char overlayChar, IEnumerable<MazeNode2D> points, bool showDiagInfo = true)
+        {
+            int startIndexRow = showDiagInfo ? 0 : MazeFirstRowIndex;
+            int startIndexCol = showDiagInfo ? 0 : MazeFirstColIndex;
+
+            var overlayHash = new HashSet<Point>();
+            foreach (var point in points)
+            {
+                overlayHash.Add(point.Id);
+            }
+
+            char[,] mazeViewChars;
+
+            string[] baseMazeArray = baseStr.Split(new Char[] { ',', '\n' })
+                                    .Where(sline => !string.IsNullOrWhiteSpace(sline))
+                                    .ToArray();
+
+            int width = baseMazeArray[0].Length;
+            int height = baseMazeArray.Length;
+
+            mazeViewChars = new char[width, height];
+
+            StringBuilder sb = new StringBuilder();
+            for (int y = 0; y < height; y++)
+            {
+                var rowString = baseMazeArray[y];
+                for (int x = 0; x < width; x++)
+                {
+                    var stringCoords = new Point(x, y);
+                    var arrayCoord = GetArrayCoords(stringCoords);
+                    arrayCoord.X -= 2;
+
+                    if (overlayHash.Contains(arrayCoord))
+                        sb.Append(overlayChar);
+                    else
+                    sb.Append(rowString[x]);
+                }
+            }
 
             return sb.ToString();
         }

@@ -1,10 +1,12 @@
 ﻿using GraphEx;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using WorldCitiesNet.Models;
@@ -24,7 +26,7 @@ namespace Graphex.Test
             List<string> mazeRows2D = new List<string>()
             {
                 "x0123456789012345678",
-                "0.........X.........",
+                "9.........X.........",
                 "8.........L.........",
                 "7....L............L.",
                 "6...L.....L.........",
@@ -42,8 +44,63 @@ namespace Graphex.Test
             Console.WriteLine(res);
             Console.WriteLine($"Node count {maze.InternalGraph.GetNodeCount()}");
             Console.WriteLine($"Edge count {maze.InternalGraph.GetEdgeCount()}");
+
+            Point startPoint = new Point(5,0);
+            int startNodeIndex = maze.InternalGraph.GetNodeIndex(startPoint);
+
+            Point endPoint = new Point(9, 9);
+            int endNodeIndex = maze.InternalGraph.GetNodeIndex(endPoint);
+
+            int[] shortestIndexes;
+            int[] directions;
+
+            //var distances = Algorithms.FindShortestPathDejikstraFromNode(startNodeIndex, maze.InternalGraph,
+            //    route => Edge2D.CalcDist(route, Heuristics.EuclideanDistance),
+            //    out shortestIndexes);
+
+            var distances = Algorithms.FindShortestPathAStarFromNodeWithTurnCost(
+                                startNodeIndex, endNodeIndex, maze.InternalGraph,
+                                GetDirectionOfEdge,
+                                GetTurnPenalty,
+                                route => Edge2D.CalcDist(route, Heuristics.ManhattanDistance),
+                                route => 0,
+                                out directions,
+                                out shortestIndexes);
+
+            var dirs = Algorithms.GetPathWithDirections(shortestIndexes, directions, startNodeIndex, endNodeIndex);
+            var dirsResult = dirs.Select(dirNode => new { Node = maze.InternalGraph.Nodes[dirNode.Item1], Dir = dirNode.Item2 });
+
+            var pathStations = Algorithms.GetShortestPath(shortestIndexes, startNodeIndex, endNodeIndex);
+            var len = Algorithms.GetShortestDistance(distances, endNodeIndex);
+
+            Console.WriteLine($"Shortest Length {len}");
+
+            var pathToFollow = pathStations.Select(nodeIndex => maze.InternalGraph.Nodes[nodeIndex]);
+
+            var resPath = string.Join(',', pathToFollow);
+            Console.WriteLine(resPath);
+
+            Console.WriteLine(maze.PrintPathOverlay(res,'+', pathToFollow));
         }
 
+        private int GetDirectionOfEdge(Graph<Point, MazeNode2D, Edge2D>  graph, int indexFrom, int indexTo)
+        {
+            var nodeFromCoord = graph.Nodes[indexFrom];
+            var nodeToCoord = graph.Nodes[indexTo];
+
+            return nodeFromCoord.Id.X.CompareTo(nodeToCoord.Id.X);
+        }
+
+        private int GetTurnPenalty(int dir1, int dir2)
+        {
+            if (dir1 != dir2)
+            {
+                return 3;
+            }
+                
+
+            return 0;
+        }
 
         [Test]
         public void ShouldUpdateEdgesCorrectly()
@@ -167,5 +224,29 @@ namespace Graphex.Test
             Assert.AreEqual('a', nodeA.NodeType);
             Assert.AreEqual('h', nodeH.NodeType);
         }
+
+        [Test]
+        public void ShouldEnrichMazeDebugInfo ()
+        {
+            Maze2D maze = new Maze2D();
+            maze.IncludeDiagColRow = false;
+            maze.InverseYAxisGraph = true;
+
+            List<string> mazeRows2D = new List<string>()
+            {
+                "1.1.2",
+                "..2..",
+                "*.3.*",
+            };
+
+            maze.InitializeFromAscii(mazeRows2D);
+            Console.WriteLine(maze.PrintMaze());
+
+            maze.EnrichWithDebugRowCol();
+
+            Console.WriteLine(maze.PrintMaze());
+        }
+
+
     }
 }
