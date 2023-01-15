@@ -183,7 +183,7 @@ namespace GraphEx
                 int yIndex = coordY;
                 if (InverseYAxisGraph)
                 {
-                    yIndex = MazeHeight - coordY;
+                    yIndex = (MazeHeight -1) - coordY;
                 }
 
                 var indexRow = (yIndex % 10).ToString();
@@ -195,7 +195,6 @@ namespace GraphEx
             IncludeDiagColRow = true;
             MazeFirstColIndex = 1;
             MazeFirstRowIndex = 1;
-
         }
 
         public void UpdateMaze(Point coord, char mazeType)
@@ -255,7 +254,7 @@ namespace GraphEx
             return sb.ToString();
         }
 
-        public string PrintPathOverlay(string baseStr, char overlayChar, IEnumerable<MazeNode2D> points, bool showDiagInfo = true)
+        public string PrintPathOverlay(string baseStr, char overlayChar, IEnumerable<MazeNode2D> points, bool extraSpaces = true, bool showDiagInfo = true)
         {
             int startIndexRow = showDiagInfo ? 0 : MazeFirstRowIndex;
             int startIndexCol = showDiagInfo ? 0 : MazeFirstColIndex;
@@ -290,8 +289,10 @@ namespace GraphEx
                     if (overlayHash.Contains(arrayCoord))
                         sb.Append(overlayChar);
                     else
-                    sb.Append(rowString[x]);
+                        sb.Append(rowString[x]);
                 }
+                if(extraSpaces)
+                sb.AppendLine();
             }
 
             return sb.ToString();
