@@ -10,27 +10,30 @@ using System.Threading.Tasks;
 
 namespace GraphEx
 {
-    public class MazeNode2D : Node<Point>
+    public class MazeNode2D
     {
         public char NodeType { get; set; }
 
         public override string ToString()
         {
-            return $"MazeNode2D([{Id.X},{Id.Y}])";
+            return $"MazeNode2D([{NodeType}])";
         }
     }
 
-    public class MazeEdge2D : Edge2D
+    public class MazeEdge2D
     {
+        public Node<Point, MazeNode2D, MazeEdge2D> From;
+
+        public Node<Point, MazeNode2D, MazeEdge2D> To;
         public override string ToString()
         {
             return $"MazeEdge2D([{From.Id.X},{From.Id.Y}] - [{To.Id.X},{To.Id.Y}])";
         }
 
-        public static double CalcDist(Edge2D edge, Func<double, double, double, double, double> distFunc)
+        public static double CalcDist(MazeEdge2D edge, Func<double, double, double, double, double> distFunc)
         {
-            var start = (Node<Point>)edge.From;
-            var stop = (Node<Point>)edge.To;
+            var start = edge.From;
+            var stop = edge.To;
             return distFunc(start.Id.X, stop.Id.X, start.Id.Y, stop.Id.Y);
         }
     }
@@ -59,7 +62,7 @@ namespace GraphEx
         public bool InverseXAxisGraph;
         public bool InverseYAxisGraph;
         public bool IncludeDiagColRow;
-        public Graph<Point, MazeNode2D, Edge2D> InternalGraph;
+        public Graph<Point, MazeNode2D, MazeEdge2D> InternalGraph;
         IList<string> _mazeRows2D;
 
         public event EventHandler<MazeNodeUpdateEventArgs> NodeAdded;
@@ -139,7 +142,7 @@ namespace GraphEx
             MazeWidth = MazeWidth - MazeFirstColIndex;
             MazeHeight = MazeHeight - MazeFirstRowIndex;
 
-            InternalGraph = new Graph<Point, MazeNode2D, Edge2D>();
+            InternalGraph = new Graph<Point, MazeNode2D, MazeEdge2D>();
 
             for (int yRow = 0; yRow < MazeHeight; yRow++)
                 for (int xCol = 0; xCol < MazeWidth; xCol++)
@@ -148,7 +151,11 @@ namespace GraphEx
                     var nodeType = _mazeRows2D[arrayCoord.Y][arrayCoord.X];
                     var newNode = InternalGraph.AddNode(new Point(xCol, yRow));
                     newNode.Id = new Point(xCol, yRow);
-                    newNode.NodeType = nodeType;
+
+                    newNode.Content = new MazeNode2D();
+                    newNode.Id = newNode.Id;
+                    newNode.Content.NodeType = nodeType;
+                    
                 }
 
             for (int yRow = 0; yRow < MazeHeight; yRow++)
@@ -159,7 +166,7 @@ namespace GraphEx
                     {
                          UpdateType = UpdateType.Create,
                          Coord = coord,
-                         NodeType = InternalGraph.GetNode(coord).NodeType
+                         NodeType = InternalGraph.GetNode(coord).Content.NodeType
                     });
                 }
         }
@@ -214,14 +221,15 @@ namespace GraphEx
 
             var newNode = InternalGraph.AddNode(new Point(xCol, yRow));
             newNode.Id = new Point(xCol, yRow);
-            newNode.NodeType = mazeType;
+            newNode.Content = new MazeNode2D();
+            newNode.Content.NodeType = mazeType;
 
             var coord2 = new Point(xCol, yRow);
             OnNodeUpdated(new MazeNodeUpdateEventArgs()
             {
                 UpdateType = UpdateType.Create,
                 Coord = coord2,
-                NodeType = InternalGraph.GetNode(coord).NodeType
+                NodeType = InternalGraph.GetNode(coord).Content.NodeType
             });
         }
 
@@ -254,7 +262,7 @@ namespace GraphEx
             return sb.ToString();
         }
 
-        public string PrintPathOverlay(string baseStr, char overlayChar, IEnumerable<MazeNode2D> points, bool extraSpaces = true, bool showDiagInfo = true)
+        public string PrintPathOverlay(string baseStr, char overlayChar, IEnumerable<Node<Point, MazeNode2D, MazeEdge2D>> points, bool extraSpaces = true, bool showDiagInfo = true)
         {
             int startIndexRow = showDiagInfo ? 0 : MazeFirstRowIndex;
             int startIndexCol = showDiagInfo ? 0 : MazeFirstColIndex;

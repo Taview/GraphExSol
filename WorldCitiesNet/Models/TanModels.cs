@@ -8,15 +8,11 @@ using System.Xml.Linq;
 
 namespace WorldCitiesNet.Models
 {
-    //    where TNodeKey :  IComparable<TNodeKey>
-    //where TNode : Node<TNodeKey>, new ()
-    //where TEdge : Edge<Node<TNodeKey>>, new ()
-
-    public class Route : Edge<Node<string>>
+    public class Route
     {
     }
 
-    public class Station : Node<string>
+    public class Station
     {
         //public string Name; //The full name of the stop, between quote marks"
         public string Desc; //The description of the stop (not used)

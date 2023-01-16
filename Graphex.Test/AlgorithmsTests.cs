@@ -59,7 +59,7 @@ namespace Graphex.Test
             int resIndex = 0;
             foreach (var pathIndex in pathStations)
             {
-                Console.WriteLine($"{nodes[pathIndex]}, {distances[pathIndex]}");
+                Console.WriteLine($"{nodes[pathIndex].Content}, {distances[pathIndex]}");
                 Assert.AreEqual(stationsToValidate[resIndex], nodes[pathIndex].Id);
                 resIndex++;
             }
@@ -67,11 +67,11 @@ namespace Graphex.Test
             Console.WriteLine($"Total Length {Algorithms.GetShortestDistance(distances, secondCity)}");
         }
 
-        private static double CalculateGeoDistance(Route route)
+        private double CalculateGeoDistance(Edge<Node<string, City, Route>, Route> route)
         {
-            var node1 = (City)route.From;
-            var node2 = (City)route.To;
-            return Helper.CalcDistInternal(node1.lng, node1.lat, node2.lng, node2.lat);
+            var node1 = route.From;
+            var node2 = route.To;
+            return Helper.CalcDistInternal(node1.Content.lng, node1.Content.lat, node2.Content.lng, node2.Content.lat);
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace Graphex.Test
             int resIndex = 0;
             foreach (var pathIndex in pathStations)
             {   
-                Console.WriteLine($"{nodes[pathIndex]}, {distances[pathIndex]}");
+                Console.WriteLine($"{nodes[pathIndex].Content}, {distances[pathIndex]}");
                 Assert.AreEqual(stationsToValidate[resIndex], nodes[pathIndex].Id);
                 resIndex++;
             }
@@ -122,8 +122,8 @@ namespace Graphex.Test
 
             foreach (var city in cities)
             {
-                var newCity = gr.AddNode(city.Id);
-                newCity.CopyFrom(city);
+                var newCity = gr.AddNode(city.city);
+                newCity.Content = city;
             }
 
             var countryGroups =
@@ -162,8 +162,8 @@ namespace Graphex.Test
             {
                 foreach (var outerCity in cities)
                 {
-                    gr.AddEdge(innerCity.Id, outerCity.Id);
-                    gr.AddEdge(outerCity.Id, innerCity.Id);
+                    gr.AddEdge(innerCity.city, outerCity.city);
+                    gr.AddEdge(outerCity.city, innerCity.city);
                 }
             }
         }
@@ -180,11 +180,6 @@ namespace Graphex.Test
             using var streamReader = File.OpenText(GetFolderPath("Data/worldcities.csv"));
             using var csvReader = new CsvReader(streamReader, csvConfig);
             cities = csvReader.GetRecords<City>().ToList();
-
-            foreach(var city in cities)
-            {
-                city.Id = city.city;
-            }
 
             return cities;
         }

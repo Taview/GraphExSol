@@ -53,9 +53,11 @@ namespace Graphex.Test
         {
             var gr = new Graph<string, Station, Route>();
             var stationA = gr.AddNode("A");
-            stationA.Lat = 789;
+            stationA.Content = new Station();
+            stationA.Content.Lat = 789;
             var stationB = gr.AddNode("B");
-            stationB.Lon = 821;
+            stationB.Content = new Station();
+            stationB.Content.Lon = 821;
             var stationC = gr.AddNode("C");
 
             gr.AddEdge("A", "C");
@@ -81,7 +83,7 @@ namespace Graphex.Test
         [Test]
         public void TestDejikstra()
         {
-            var gr = new Graph<int, Node<int>, Edge<Node<int>>>(initializeSelfNode: true);
+            var gr = new Graph<int, int, int>(initializeSelfNode: true);
             gr.AddNode(0);
             gr.AddNode(1);
             gr.AddNode(2);
@@ -159,7 +161,7 @@ namespace Graphex.Test
         [Test]
         public void TestAStarFast()
         {
-            var gr = new Graph<int, Node<int>, Edge<Node<int>>>(initializeSelfNode: true);
+            var gr = new Graph<int, int, int>(initializeSelfNode: true);
             gr.AddNode(0);
             gr.AddNode(1);
             gr.AddNode(2);
@@ -234,7 +236,7 @@ namespace Graphex.Test
 
         }
 
-        private void AddDejikstraEdge(Graph<int, Node<int>, Edge<Node<int>>> gr, int from, int to, double dist)
+        private void AddDejikstraEdge(Graph<int, int, int> gr, int from, int to, double dist)
         {
             var edge = gr.AddEdge(from, to);
             edge.Distance = dist;
@@ -249,19 +251,22 @@ namespace Graphex.Test
         {
             var gr = new Graph<string, Station, Route>();
             var stationABDU = gr.AddNode("ABDU");
-            stationABDU.Desc = "Abel Durand";
-            stationABDU.Lat = 47.22019661;
-            stationABDU.Lon = -1.60337553;
+            stationABDU.Content = new Station();
+            stationABDU.Content.Desc = "Abel Durand";
+            stationABDU.Content.Lat = 47.22019661;
+            stationABDU.Content.Lon = -1.60337553;
 
             var stationABLA = gr.AddNode("ABLA");
-            stationABLA.Desc = "Avenue Blanche";
-            stationABLA.Lat = 47.22973509;
-            stationABLA.Lon = -1.58937990;
+            stationABLA.Content = new Station();
+            stationABLA.Content.Desc = "Avenue Blanche";
+            stationABLA.Content.Lat = 47.22973509;
+            stationABLA.Content.Lon = -1.58937990;
 
             var stationACHA = gr.AddNode("ACHA");
-            stationACHA.Desc = "Angle Chaillou";
-            stationACHA.Lat = 47.26979248;
-            stationACHA.Lon = -1.57206627;
+            stationACHA.Content = new Station();
+            stationACHA.Content.Desc = "Angle Chaillou";
+            stationACHA.Content.Lat = 47.26979248;
+            stationACHA.Content.Lon = -1.57206627;
 
             gr.AddEdge("ABDU", "ABLA");
             gr.AddEdge("ABLA", "ACHA");
@@ -279,7 +284,7 @@ namespace Graphex.Test
 
             foreach(var stationIndex in pathStations)
             {
-                Console.WriteLine(nodeList[stationIndex].Desc);
+                Console.WriteLine(nodeList[stationIndex].Content.Desc);
             }
 
             Assert.AreEqual(1, gr.GetNode("ABDU").Edges.Count);
@@ -341,7 +346,7 @@ namespace Graphex.Test
         [TestCase(1000, 1000, 0, 2, 999, 999)]
         public void Test2DGraphDejikstra(int width, int height, int x1, int y1, int x2, int y2)
         {
-            var gr = new Graph<Point, Node2D, Edge2D>();
+            var gr = new Graph<Point, Node<Point, int, int>, int>();
 
             Point start, end;
             BuildTest2Graph(width, height, x1, y1, x2, y2, gr, out start, out end);
@@ -358,7 +363,7 @@ namespace Graphex.Test
             var shortestDistanceIndexes = Algorithms.FindShortestPathDejikstraFromNode(
                 startNodeIndex, 
                 gr, 
-                edge => Edge2D.CalcDist(edge, Heuristics.ManhattanDistance), 
+                edge => Helper.CalcDistPoint(edge, Heuristics.ManhattanDistance), 
                 out shortestPathIndexes);
 
             dejikstraWatchTime.Stop();
@@ -387,7 +392,7 @@ namespace Graphex.Test
         [TestCase(1000, 1000, 0, 2, 999, 999)]
         public void Test2DGraphAStar(int width, int height, int x1, int y1, int x2, int y2)
         {
-            var gr = new Graph<Point, Node2D, Edge2D>();
+            var gr = new Graph<Point, Node<Point, int, int>, int>();
 
             Point start, end;
             BuildTest2Graph(width, height, x1, y1, x2, y2, gr, out start, out end);
@@ -406,8 +411,8 @@ namespace Graphex.Test
                 startNodeIndex,
                 endNodeIndex,
                 gr,
-                edge => Edge2D.CalcDist(edge, Heuristics.ManhattanDistance),
-                edge => Edge2D.CalcDist(edge, Heuristics.ManhattanDistance),
+                edge => Helper.CalcDistPoint(edge, Heuristics.ManhattanDistance),
+                edge => Helper.CalcDistPoint(edge, Heuristics.ManhattanDistance),
                 out shortestPathIndexes);
 
             astartWatchTimer.Stop();
@@ -432,7 +437,7 @@ namespace Graphex.Test
             }
         }
 
-        private static void BuildTest2Graph(int width, int height, int x1, int y1, int x2, int y2, Graph<Point, Node2D, Edge2D> gr, out Point start, out Point end)
+        private static void BuildTest2Graph(int width, int height, int x1, int y1, int x2, int y2, Graph<Point, Node<Point, int, int>, int> gr, out Point start, out Point end)
         {
             start = new Point(x1, y1);
             end = new Point(x2, y2);

@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
 using GraphEx;
+using System.Drawing;
 using System.Globalization;
 using System.Reflection;
 using WorldCitiesNet.Models;
@@ -23,18 +24,28 @@ namespace WorldCitiesNet
             return Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2)) * 6371;
         }
 
-        public static double CalcDistCity(Route route)
+        //public static double CalcDistCity(Route route)
+        //{
+        //    var node1 = (City)route.From;
+        //    var node2 = (City)route.To;
+        //    return Helper.CalcDistInternal(node1.lng, node1.lat, node2.lng, node2.lat);
+        
+        public static double CalcDistPoint<TNodePayloadType, TEdgePayloadType>(
+            Edge<Node<Point, TNodePayloadType, TEdgePayloadType>, TEdgePayloadType> edge, 
+            Func<int, int, int, int, int> distFunc)
         {
-            var node1 = (City)route.From;
-            var node2 = (City)route.To;
-            return Helper.CalcDistInternal(node1.lng, node1.lat, node2.lng, node2.lat);
+            var from = edge.From;
+            var to = edge.To;
+            return distFunc(from.Id.X, to.Id.X, from.Id.Y, to.Id.Y);
         }
 
-        public static double CalcDistStation(Route route)
+
+        //Func<Edge<Node<TKeyNode, TNodePayload, TEdgePayload>, TEdgePayload>, double> distFunc
+        public static double CalcDistStation(Edge<Node<string,Station,Route>, Route> route)
         {
-            Station start = (Station)route.From;
-            Station stop = (Station)route.To;
-            return CalcDistInternal(start.Lon, start.Lat, stop.Lon, stop.Lat);
+            var start = route.From;
+            var stop = route.To;
+            return CalcDistInternal(start.Content.Lon, start.Content.Lat, stop.Content.Lon, stop.Content.Lat);
         }
 
         private static double DegToRad(double degrees)
@@ -49,8 +60,8 @@ namespace WorldCitiesNet
 
             foreach (var city in cities)
             {
-                var newCity = gr.AddNode(city.Id);
-                newCity.CopyFrom(city);
+                var newCity = gr.AddNode(city.city);
+                //newCity.CopyFrom(city);
             }
 
             //var countryAdminGroups =
@@ -92,8 +103,8 @@ namespace WorldCitiesNet
             {
                 foreach (var outerCity in cities)
                 {
-                    gr.AddEdge(innerCity.Id, outerCity.Id);
-                    gr.AddEdge(outerCity.Id, innerCity.Id);
+                    gr.AddEdge(innerCity.city, outerCity.city);
+                    gr.AddEdge(outerCity.city, innerCity.city);
                 }
             }
         }
@@ -110,11 +121,6 @@ namespace WorldCitiesNet
             using var streamReader = File.OpenText(GetFolderPath("Data/worldcities.csv"));
             using var csvReader = new CsvReader(streamReader, csvConfig);
             cities = csvReader.GetRecords<City>().ToList();
-
-            foreach (var city in cities)
-            {
-                city.Id = city.city;
-            }
 
             return cities;
         }

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using WorldCitiesNet;
 using WorldCitiesNet.Models;
 
 namespace Graphex.Test
@@ -62,7 +63,7 @@ namespace Graphex.Test
                                 startNodeIndex, endNodeIndex, maze.InternalGraph,
                                 GetDirectionOfEdge,
                                 GetTurnPenalty,
-                                route => Edge2D.CalcDist(route, Heuristics.ManhattanDistance),
+                                route => Helper.CalcDistPoint(route, Heuristics.ManhattanDistance),
                                 route => 0,
                                 out directions,
                                 out shortestIndexes);
@@ -83,7 +84,7 @@ namespace Graphex.Test
             Console.WriteLine(maze.PrintPathOverlay(res,'+', pathToFollow, false));
         }
 
-        private int GetDirectionOfEdge(Graph<Point, MazeNode2D, Edge2D>  graph, int indexFrom, int indexTo)
+        private int GetDirectionOfEdge(Graph<Point, MazeNode2D, MazeEdge2D> graph, int indexFrom, int indexTo)
         {
             var nodeFromCoord = graph.Nodes[indexFrom];
             var nodeToCoord = graph.Nodes[indexTo];
@@ -178,7 +179,7 @@ namespace Graphex.Test
             }
         }
 
-        private void AddHorizontalConnections(Point coord, Graph<Point, MazeNode2D, Edge2D> graph, int maxWidth)
+        private void AddHorizontalConnections(Point coord, Graph<Point, MazeNode2D, MazeEdge2D> graph, int maxWidth)
         {
             if (coord.X > 0)
             {
@@ -221,8 +222,8 @@ namespace Graphex.Test
             var nodeA = maze.InternalGraph.GetNode(new Point(ax, ay));
             var nodeH = maze.InternalGraph.GetNode(new Point(hx, hy));
 
-            Assert.AreEqual('a', nodeA.NodeType);
-            Assert.AreEqual('h', nodeH.NodeType);
+            Assert.AreEqual('a', nodeA.Content.NodeType);
+            Assert.AreEqual('h', nodeH.Content.NodeType);
         }
 
         [Test]
