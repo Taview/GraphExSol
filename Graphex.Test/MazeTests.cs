@@ -80,7 +80,7 @@ namespace Graphex.Test
             var resPath = string.Join(',', pathToFollow);
             Console.WriteLine(resPath);
 
-            Console.WriteLine(maze.PrintPathOverlay(res,'+', pathToFollow));
+            Console.WriteLine(maze.PrintPathOverlay(res,'+', pathToFollow, false));
         }
 
         private int GetDirectionOfEdge(Graph<Point, MazeNode2D, Edge2D>  graph, int indexFrom, int indexTo)
@@ -95,7 +95,7 @@ namespace Graphex.Test
         {
             if (dir1 != dir2)
             {
-                return 3;
+                return 5;
             }
                 
 
