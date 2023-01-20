@@ -24,11 +24,6 @@ namespace WorldCitiesNet
             return Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2)) * 6371;
         }
 
-        //public static double CalcDistCity(Route route)
-        //{
-        //    var node1 = (City)route.From;
-        //    var node2 = (City)route.To;
-        //    return Helper.CalcDistInternal(node1.lng, node1.lat, node2.lng, node2.lat);
         
         public static double CalcDistPoint<TNodePayloadType, TEdgePayloadType>(
             Edge<Node<Point, TNodePayloadType, TEdgePayloadType>, TEdgePayloadType> edge, 

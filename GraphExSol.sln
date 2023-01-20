@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphex.Test", "Graphex.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorldCitiesNet", "WorldCitiesNet\WorldCitiesNet.csproj", "{C28B5554-39BE-4F6D-95F8-6A62D84E9A68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphView.Test", "GraphView.Test\GraphView.Test.csproj", "{1BA04795-EE72-4E28-9E70-A8F344951988}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphView", "GraphView\GraphView.csproj", "{75C4A9CB-0D58-4B47-9D33-822253DBAEE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{C28B5554-39BE-4F6D-95F8-6A62D84E9A68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C28B5554-39BE-4F6D-95F8-6A62D84E9A68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C28B5554-39BE-4F6D-95F8-6A62D84E9A68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BA04795-EE72-4E28-9E70-A8F344951988}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BA04795-EE72-4E28-9E70-A8F344951988}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BA04795-EE72-4E28-9E70-A8F344951988}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BA04795-EE72-4E28-9E70-A8F344951988}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75C4A9CB-0D58-4B47-9D33-822253DBAEE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75C4A9CB-0D58-4B47-9D33-822253DBAEE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75C4A9CB-0D58-4B47-9D33-822253DBAEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75C4A9CB-0D58-4B47-9D33-822253DBAEE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
