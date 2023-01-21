@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Xml.Linq;
-using System.Xml.Schema;
-using static System.Collections.Specialized.BitVector32;
 
 namespace GraphEx
 {
@@ -13,7 +9,7 @@ namespace GraphEx
     {
         public TKey Id { get; set; }
 
-        public TNodePayload Content { get; set; }
+        public TNodePayload Payload { get; set; }
 
         public Dictionary<TKey, Edge<Node<TKey, TNodePayload, TEdgePayload>, TEdgePayload>> Edges { get; set; }
 
@@ -32,9 +28,9 @@ namespace GraphEx
     {
         public TNodeType From { get; set; }
         public TNodeType To { get; set; }
-        public double Distance { get; set; }
+        //public double Distance { get; set; }
 
-        public TEdgePayload Content { get; set; }
+        public TEdgePayload Payload { get; set; }
 
         public Edge() { }
 

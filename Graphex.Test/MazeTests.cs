@@ -222,8 +222,8 @@ namespace Graphex.Test
             var nodeA = maze.InternalGraph.GetNode(new Point(ax, ay));
             var nodeH = maze.InternalGraph.GetNode(new Point(hx, hy));
 
-            Assert.AreEqual('a', nodeA.Content.NodeType);
-            Assert.AreEqual('h', nodeH.Content.NodeType);
+            Assert.AreEqual('a', nodeA.Payload.NodeType);
+            Assert.AreEqual('h', nodeH.Payload.NodeType);
         }
 
         [Test]

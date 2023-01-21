@@ -152,9 +152,9 @@ namespace GraphEx
                     var newNode = InternalGraph.AddNode(new Point(xCol, yRow));
                     newNode.Id = new Point(xCol, yRow);
 
-                    newNode.Content = new MazeNode2D();
+                    newNode.Payload = new MazeNode2D();
                     newNode.Id = newNode.Id;
-                    newNode.Content.NodeType = nodeType;
+                    newNode.Payload.NodeType = nodeType;
                     
                 }
 
@@ -166,7 +166,7 @@ namespace GraphEx
                     {
                          UpdateType = UpdateType.Create,
                          Coord = coord,
-                         NodeType = InternalGraph.GetNode(coord).Content.NodeType
+                         NodeType = InternalGraph.GetNode(coord).Payload.NodeType
                     });
                 }
         }
@@ -221,15 +221,15 @@ namespace GraphEx
 
             var newNode = InternalGraph.AddNode(new Point(xCol, yRow));
             newNode.Id = new Point(xCol, yRow);
-            newNode.Content = new MazeNode2D();
-            newNode.Content.NodeType = mazeType;
+            newNode.Payload = new MazeNode2D();
+            newNode.Payload.NodeType = mazeType;
 
             var coord2 = new Point(xCol, yRow);
             OnNodeUpdated(new MazeNodeUpdateEventArgs()
             {
                 UpdateType = UpdateType.Create,
                 Coord = coord2,
-                NodeType = InternalGraph.GetNode(coord).Content.NodeType
+                NodeType = InternalGraph.GetNode(coord).Payload.NodeType
             });
         }
 

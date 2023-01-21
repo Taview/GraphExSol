@@ -40,7 +40,7 @@ namespace WorldCitiesNet
         {
             var start = route.From;
             var stop = route.To;
-            return CalcDistInternal(start.Content.Lon, start.Content.Lat, stop.Content.Lon, stop.Content.Lat);
+            return CalcDistInternal(start.Payload.Lon, start.Payload.Lat, stop.Payload.Lon, stop.Payload.Lat);
         }
 
         private static double DegToRad(double degrees)

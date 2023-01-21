@@ -59,7 +59,7 @@ namespace Graphex.Test
             int resIndex = 0;
             foreach (var pathIndex in pathStations)
             {
-                Console.WriteLine($"{nodes[pathIndex].Content}, {distances[pathIndex]}");
+                Console.WriteLine($"{nodes[pathIndex].Payload}, {distances[pathIndex]}");
                 Assert.AreEqual(stationsToValidate[resIndex], nodes[pathIndex].Id);
                 resIndex++;
             }
@@ -71,7 +71,7 @@ namespace Graphex.Test
         {
             var node1 = route.From;
             var node2 = route.To;
-            return Helper.CalcDistInternal(node1.Content.lng, node1.Content.lat, node2.Content.lng, node2.Content.lat);
+            return Helper.CalcDistInternal(node1.Payload.lng, node1.Payload.lat, node2.Payload.lng, node2.Payload.lat);
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace Graphex.Test
             int resIndex = 0;
             foreach (var pathIndex in pathStations)
             {   
-                Console.WriteLine($"{nodes[pathIndex].Content}, {distances[pathIndex]}");
+                Console.WriteLine($"{nodes[pathIndex].Payload}, {distances[pathIndex]}");
                 Assert.AreEqual(stationsToValidate[resIndex], nodes[pathIndex].Id);
                 resIndex++;
             }
@@ -123,7 +123,7 @@ namespace Graphex.Test
             foreach (var city in cities)
             {
                 var newCity = gr.AddNode(city.city);
-                newCity.Content = city;
+                newCity.Payload = city;
             }
 
             var countryGroups =
