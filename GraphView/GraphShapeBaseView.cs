@@ -10,8 +10,6 @@ namespace GraphView
 {
     public abstract class GraphShapeBaseView<TNodeKey, TNodePayload, TEdgePayload> : IGraphBase 
             where TNodeKey : IEquatable<TNodeKey>
-            where TNodePayload : new()
-            where TEdgePayload : new()
     {
         public List<NodeShapeView> NodeViews;
         public List<EdgeShapeView> EdgeViews;

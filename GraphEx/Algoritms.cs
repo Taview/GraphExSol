@@ -14,8 +14,6 @@ namespace GraphEx
             Func<Edge<Node<TKeyNode, TNodePayload, TEdgePayload>, TEdgePayload>, double> distFunc,
             out int[] path)
             where TKeyNode : IEquatable<TKeyNode>
-            where TNodePayload : new()
-            where TEdgePayload : new()
         {
             var _graph = graph;
 
@@ -87,8 +85,6 @@ namespace GraphEx
             Func<Edge<Node<TKeyNode, TNodePayload, TEdgePayload>, TEdgePayload>, double> finalDistTargetFunc,
             out int[] path)
             where TKeyNode : IEquatable<TKeyNode>
-            where TNodePayload : new()
-            where TEdgePayload : new()
         {
             var _graph = graph;
 
@@ -176,8 +172,6 @@ namespace GraphEx
             out int[] directions,
             out int[] path)
             where TKeyNode : IEquatable<TKeyNode>
-            where TNodePayload : new()
-            where TEdgePayload : new()
         {
             var _graph = graph;
 

@@ -46,8 +46,6 @@ namespace GraphEx
 
     public class Graph<TNodeKey, TNodePayload, TEdgePayload>
     where TNodeKey : IEquatable<TNodeKey>
-    where TNodePayload : new()
-    where TEdgePayload : new()
     {
         public Dictionary<TNodeKey, int> NodeIndexes;
 

@@ -11,7 +11,7 @@ namespace GraphView.Test
         private GraphViewForm m_myForm;
 
         [Test]
-        //[Ignore("This test is for Demo purposes only comment ignore attribute to proceed")]
+        [Ignore("This test is for Demo purposes only comment ignore attribute to proceed")]
         public void Demo2DGraphs()
         {
             var graphView2D = new GraphShapeView2D<int, int>(new Point(20, 35), 60, 70);
@@ -71,7 +71,7 @@ namespace GraphView.Test
         }
 
         [Test]
-        //[Ignore("This test is for Demo purposes only comment ignore attribute to proceed")]
+        [Ignore("This test is for Demo purposes only comment ignore attribute to proceed")]
         public void ShowDejikstra()
         {
             Maze2D maze = new Maze2D();
