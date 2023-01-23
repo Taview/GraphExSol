@@ -24,7 +24,7 @@ namespace Graphex.Test
         [Test]
         public void TestIfValueAssignedInCtor()
         {
-            var gr = new Graph<string, Station, Route>();
+            var gr = new Graph<string>();
             var stationA = gr.AddNode("A");
             var strationB = gr.AddNode("B");
             var strationC = gr.AddNode("C");
@@ -37,7 +37,7 @@ namespace Graphex.Test
         [Test]
         public void AddNodeShouldAddOrOverwriteNewNodes()
         {
-            var gr = new Graph<string, Station, Route>();
+            var gr = new Graph<string>();
             var stationA = gr.AddNode("A");
             var strationB = gr.AddNode("B");
             var strationC = gr.AddNode("C");
@@ -51,13 +51,17 @@ namespace Graphex.Test
         [Test]
         public void AddEdgesShouldAddOrOverwriteEdgeNodes()
         {
-            var gr = new Graph<string, Station, Route>();
+            var gr = new Graph<string>();
             var stationA = gr.AddNode("A");
-            stationA.Payload = new Station();
-            stationA.Payload.Lat = 789;
+            var station = new Station();
+            station.Lat = 789;
+            stationA.Payload = station;
+
             var stationB = gr.AddNode("B");
-            stationB.Payload = new Station();
-            stationB.Payload.Lon = 821;
+            station = new Station();
+            station.Lon = 821;
+            stationB.Payload = station;
+
             var stationC = gr.AddNode("C");
 
             gr.AddEdge("A", "C");
@@ -83,7 +87,7 @@ namespace Graphex.Test
         [Test]
         public void TestDejikstra()
         {
-            var gr = new Graph<int, int, double>(initializeSelfNode: true);
+            var gr = new Graph<int>(initializeSelfNode: true);
             gr.AddNode(0);
             gr.AddNode(1);
             gr.AddNode(2);
@@ -113,7 +117,7 @@ namespace Graphex.Test
             int endNodeIndex = gr.GetNodeIndex(nodeEnd);
 
             int[] shortestPathIndexes;
-            var shortestDistanceIndexes = Algorithms.FindShortestPathDejikstraFromNode(startNodeIndex, gr, edge => edge.Payload, out shortestPathIndexes);
+            var shortestDistanceIndexes = Algorithms.FindShortestPathDejikstraFromNode(startNodeIndex, gr, edge => (double)edge.Payload, out shortestPathIndexes);
             var resPath = Algorithms.GetShortestPath(shortestPathIndexes, startNodeIndex, endNodeIndex);
 
             int index = 0;
@@ -161,7 +165,7 @@ namespace Graphex.Test
         [Test]
         public void TestAStarFast()
         {
-            var gr = new Graph<int, int, double>(initializeSelfNode: true);
+            var gr = new Graph<int>(initializeSelfNode: true);
             gr.AddNode(0);
             gr.AddNode(1);
             gr.AddNode(2);
@@ -195,8 +199,8 @@ namespace Graphex.Test
                 startNodeIndex, 
                 endNodeIndex, 
                 gr, 
-                edge => edge.Payload, 
-                edge => edge.Payload, 
+                edge => (double)edge.Payload, 
+                edge => 0, 
                 out shortestPathIndexes);
             var resPath = Algorithms.GetShortestPath(shortestPathIndexes, startNodeIndex, endNodeIndex);
 
@@ -236,7 +240,7 @@ namespace Graphex.Test
 
         }
 
-        private void AddDoubleEdgesWithFixedDist(Graph<int, int, double> gr, int from, int to, double dist)
+        private void AddDoubleEdgesWithFixedDist(Graph<int> gr, int from, int to, double dist)
         {
             var edge = gr.AddEdge(from, to);
             edge.Payload = dist;
@@ -249,24 +253,28 @@ namespace Graphex.Test
         [Test]
         public void CreateTestStations()
         {
-            var gr = new Graph<string, Station, Route>();
+            var gr = new Graph<string>();
             var stationABDU = gr.AddNode("ABDU");
-            stationABDU.Payload = new Station();
-            stationABDU.Payload.Desc = "Abel Durand";
-            stationABDU.Payload.Lat = 47.22019661;
-            stationABDU.Payload.Lon = -1.60337553;
+            var station = new Station();
+            station.Desc = "Abel Durand";
+            station.Lat = 47.22019661;
+            station.Lon = -1.60337553;
+            stationABDU.Payload = station;
 
             var stationABLA = gr.AddNode("ABLA");
-            stationABLA.Payload = new Station();
-            stationABLA.Payload.Desc = "Avenue Blanche";
-            stationABLA.Payload.Lat = 47.22973509;
-            stationABLA.Payload.Lon = -1.58937990;
+            station = new Station();
+            station.Desc = "Avenue Blanche";
+            station.Lat = 47.22973509;
+            station.Lon = -1.58937990;
+            stationABLA.Payload = station;
 
             var stationACHA = gr.AddNode("ACHA");
-            stationACHA.Payload = new Station();
-            stationACHA.Payload.Desc = "Angle Chaillou";
-            stationACHA.Payload.Lat = 47.26979248;
-            stationACHA.Payload.Lon = -1.57206627;
+
+            station = new Station();
+            station.Desc = "Angle Chaillou";
+            station.Lat = 47.26979248;
+            station.Lon = -1.57206627;
+            stationACHA.Payload = station;
 
             gr.AddEdge("ABDU", "ABLA");
             gr.AddEdge("ABLA", "ACHA");
@@ -284,7 +292,7 @@ namespace Graphex.Test
 
             foreach(var stationIndex in pathStations)
             {
-                Console.WriteLine(nodeList[stationIndex].Payload.Desc);
+                Console.WriteLine(((Station)nodeList[stationIndex].Payload).Desc);
             }
 
             Assert.AreEqual(1, gr.GetNode("ABDU").Edges.Count);
@@ -295,7 +303,7 @@ namespace Graphex.Test
         [Test]
         public void ShouldCreateAndDeleteNodesCorrectly()
         {
-            var gr = new Graph<string, Station, Route>();
+            var gr = new Graph<string>();
             gr.AddNode("Node0");
             gr.AddNode("Node1");
             gr.AddNode("Node2");
@@ -311,7 +319,7 @@ namespace Graphex.Test
         [Test]
         public void ShouldCreateAndDeleteEdgesCorrectly()
         {
-            var gr = new Graph<string, Station, Route>(initializeSelfNode: true);
+            var gr = new Graph<string>(initializeSelfNode: true);
             gr.AddNode("Node1");
             gr.AddNode("Node2");
             gr.AddNode("Node3");
@@ -346,7 +354,7 @@ namespace Graphex.Test
         [TestCase(1000, 1000, 0, 2, 999, 999)]
         public void Test2DGraphDejikstra(int width, int height, int x1, int y1, int x2, int y2)
         {
-            var gr = new Graph<Point, Node<Point, int, int>, int>();
+            var gr = new Graph<Point>();
 
             Point start, end;
             BuildTest2Graph(width, height, x1, y1, x2, y2, gr, out start, out end);
@@ -392,7 +400,7 @@ namespace Graphex.Test
         [TestCase(1000, 1000, 0, 2, 999, 999)]
         public void Test2DGraphAStar(int width, int height, int x1, int y1, int x2, int y2)
         {
-            var gr = new Graph<Point, Node<Point, int, int>, int>();
+            var gr = new Graph<Point>();
 
             Point start, end;
             BuildTest2Graph(width, height, x1, y1, x2, y2, gr, out start, out end);
@@ -437,7 +445,7 @@ namespace Graphex.Test
             }
         }
 
-        private static void BuildTest2Graph(int width, int height, int x1, int y1, int x2, int y2, Graph<Point, Node<Point, int, int>, int> gr, out Point start, out Point end)
+        private static void BuildTest2Graph(int width, int height, int x1, int y1, int x2, int y2, Graph<Point> gr, out Point start, out Point end)
         {
             start = new Point(x1, y1);
             end = new Point(x2, y2);

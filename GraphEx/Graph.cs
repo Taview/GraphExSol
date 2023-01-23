@@ -4,33 +4,34 @@ using System.Linq;
 
 namespace GraphEx
 {
-    public class Node<TKey, TNodePayload, TEdgePayload>
-    where TKey : IEquatable<TKey>
+    public class Node<TNodeKey>
+    where TNodeKey : IEquatable<TNodeKey>
     {
-        public TKey Id { get; set; }
+        public TNodeKey Id { get; set; }
 
-        public TNodePayload Payload { get; set; }
+        public Object Payload { get; set; }
 
-        public Dictionary<TKey, Edge<Node<TKey, TNodePayload, TEdgePayload>, TEdgePayload>> Edges { get; set; }
+        public Dictionary<TNodeKey, Edge<TNodeKey>> Edges { get; set; }
 
         public Node()
         {
-            Edges = new Dictionary<TKey, Edge<Node<TKey, TNodePayload, TEdgePayload>, TEdgePayload>>();
+            Edges = new Dictionary<TNodeKey, Edge<TNodeKey>>();
         }
 
         public override string ToString()
         {
-            return $"Node[{Id}]";
+            return $"Node[{Id}] - ({Payload})";
         }
     }
 
-    public class Edge<TNodeType, TEdgePayload>
+    public class Edge<TNodeKey>
+        where TNodeKey : IEquatable<TNodeKey>
     {
-        public TNodeType From { get; set; }
-        public TNodeType To { get; set; }
+        public Node<TNodeKey> From { get; set; }
+        public Node<TNodeKey> To { get; set; }
         //public double Distance { get; set; }
 
-        public TEdgePayload Payload { get; set; }
+        public Object Payload { get; set; }
 
         public Edge() { }
 
@@ -40,19 +41,19 @@ namespace GraphEx
         }
     }
 
-    public class Graph<TNodeKey, TNodePayload, TEdgePayload>
+    public class Graph<TNodeKey>
     where TNodeKey : IEquatable<TNodeKey>
     {
         public Dictionary<TNodeKey, int> NodeIndexes;
 
-        public List<Node<TNodeKey, TNodePayload, TEdgePayload>> Nodes;
+        public List<Node<TNodeKey>> Nodes;
 
         private bool _SelfNodeEdgeByDefault;
 
         public Graph(bool initializeSelfNode = false)
         {
             _SelfNodeEdgeByDefault = initializeSelfNode;
-            Nodes = new List<Node<TNodeKey, TNodePayload, TEdgePayload>>();
+            Nodes = new List<Node<TNodeKey>>();
             NodeIndexes = new Dictionary<TNodeKey, int>();
         }
 
@@ -66,11 +67,11 @@ namespace GraphEx
             return Nodes.Sum(node => node.Edges.Count);
         }
 
-        public Node<TNodeKey, TNodePayload, TEdgePayload> AddNode(TNodeKey id)
+        public Node<TNodeKey> AddNode(TNodeKey id)
         {
             if (!NodeIndexes.ContainsKey(id))
             {
-                var newNode = new Node<TNodeKey, TNodePayload, TEdgePayload>();
+                var newNode = new Node<TNodeKey>();
                 newNode.Id = id;
 
                 //Not Thread safe
@@ -119,10 +120,10 @@ namespace GraphEx
         {
         }
 
-        public Edge<Node<TNodeKey, TNodePayload, TEdgePayload>, TEdgePayload> AddEdge(TNodeKey from, TNodeKey to)
+        public Edge<TNodeKey> AddEdge(TNodeKey from, TNodeKey to)
         {
-            Node<TNodeKey, TNodePayload, TEdgePayload> fromNode = null;
-            Node<TNodeKey, TNodePayload, TEdgePayload> toNode = null;
+            Node<TNodeKey> fromNode = null;
+            Node<TNodeKey> toNode = null;
             if (NodeIndexes.ContainsKey(from)) { fromNode = Nodes[NodeIndexes[from]]; }
             if (NodeIndexes.ContainsKey(to)) { toNode = Nodes[NodeIndexes[to]]; }
 
@@ -131,7 +132,7 @@ namespace GraphEx
                 throw new ArgumentException($"Can't find nodes to construct route {from} {to}");
             }
 
-            var newEdge = new Edge<Node<TNodeKey, TNodePayload, TEdgePayload>, TEdgePayload>();
+            var newEdge = new Edge<TNodeKey>();
             newEdge.From = fromNode;
             newEdge.To = toNode;
             //Add a link to a node
@@ -142,7 +143,7 @@ namespace GraphEx
 
         public bool IsEdgeExist(TNodeKey from, TNodeKey to)
         {
-            Node<TNodeKey, TNodePayload, TEdgePayload> fromNode = null;
+            Node<TNodeKey> fromNode = null;
             if (NodeIndexes.ContainsKey(from)) { fromNode = Nodes[NodeIndexes[from]]; }
 
             if (fromNode == null)
@@ -181,7 +182,7 @@ namespace GraphEx
             return -1;
         }
 
-        public Node<TNodeKey, TNodePayload, TEdgePayload> GetNode(TNodeKey nodeKey)
+        public Node<TNodeKey> GetNode(TNodeKey nodeKey)
         {
             if (!NodeIndexes.ContainsKey(nodeKey))
             {

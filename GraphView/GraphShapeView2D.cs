@@ -9,9 +9,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 
 namespace GraphView
 {
-    public class GraphShapeView2D<TNodePayload, TEdgePayload> : GraphShapeBaseView<Point, TNodePayload, TEdgePayload>
-            where TNodePayload : new()
-            where TEdgePayload : new()
+    public class GraphShapeView2D : GraphShapeBaseView<Point>
     {
 
         public int GraphWidth;
@@ -56,7 +54,7 @@ namespace GraphView
             this.yScale = yScale;
         }
 
-        public override void AddEdges(Graph<Point, TNodePayload, TEdgePayload> graph)
+        public override void AddEdges(Graph<Point> graph)
         {
 
             foreach (var node in graph.Nodes)
@@ -93,7 +91,7 @@ namespace GraphView
             return retVal;
         }
 
-        public override void AddNodes(Graph<Point, TNodePayload, TEdgePayload> graph)
+        public override void AddNodes(Graph<Point> graph)
         {
             GraphWidth = graph.Nodes.Max(node => node.Id.X);
             GraphHeight = graph.Nodes.Max(node => node.Id.Y);

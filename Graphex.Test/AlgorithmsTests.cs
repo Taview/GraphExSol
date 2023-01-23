@@ -15,7 +15,7 @@ namespace Graphex.Test
 {
     public class AlgorithmsTests
     {
-        private Graph<string, City, Route> cityGraph;
+        private Graph<string> cityGraph;
 
         [SetUp]
         public void Setup()
@@ -49,7 +49,7 @@ namespace Graphex.Test
             dejikstraWatchTime.Start();
 
             int[] shortestIndexes;
-            var distances = Algorithms.FindShortestPathDejikstraFromNode<string, City, Route>(firstCity, cityGraph, route => CalculateGeoDistance(route), out shortestIndexes);
+            var distances = Algorithms.FindShortestPathDejikstraFromNode<string>(firstCity, cityGraph, route => CalculateGeoDistance(route), out shortestIndexes);
 
             dejikstraWatchTime.Stop();
             Console.WriteLine($"Dejikstra Execution Time: {dejikstraWatchTime.Elapsed.TotalSeconds} secs");
@@ -67,11 +67,11 @@ namespace Graphex.Test
             Console.WriteLine($"Total Length {Algorithms.GetShortestDistance(distances, secondCity)}");
         }
 
-        private double CalculateGeoDistance(Edge<Node<string, City, Route>, Route> route)
+        private double CalculateGeoDistance(Edge<string> route)
         {
-            var node1 = route.From;
-            var node2 = route.To;
-            return Helper.CalcDistInternal(node1.Payload.lng, node1.Payload.lat, node2.Payload.lng, node2.Payload.lat);
+            var node1 = (City)route.From.Payload;
+            var node2 = (City)route.To.Payload;
+            return Helper.CalcDistInternal(node1.lng, node1.lat, node2.lng, node2.lat);
         }
 
         [Test]
@@ -92,7 +92,7 @@ namespace Graphex.Test
             dejikstraWatchTime.Start();
 
             int[] shortestIndexes;
-            var distances = Algorithms.FindShortestPathAStarFromNode<string, City, Route>(
+            var distances = Algorithms.FindShortestPathAStarFromNode<string>(
                 firstCity, 
                 secondCity,
                 cityGraph, 
@@ -115,9 +115,9 @@ namespace Graphex.Test
         }
 
         #region Helper Funcs
-        public Graph<string, City, Route> PrepareCityGraph()
+        public Graph<string> PrepareCityGraph()
         {
-            var gr = new Graph<string, City, Route>();
+            var gr = new Graph<string>();
             var cities = LoadCities();
 
             foreach (var city in cities)
@@ -156,7 +156,7 @@ namespace Graphex.Test
             return gr;
         }
 
-        private void CreateCrossJoindEdges(IEnumerable<City> cities, Graph<string, City, Route> gr)
+        private void CreateCrossJoindEdges(IEnumerable<City> cities, Graph<string> gr)
         {
             foreach (var innerCity in cities)
             {

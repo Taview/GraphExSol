@@ -1,16 +1,11 @@
 ﻿using GraphEx;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 using WorldCitiesNet;
-using WorldCitiesNet.Models;
 
 namespace Graphex.Test
 {
@@ -84,7 +79,7 @@ namespace Graphex.Test
             Console.WriteLine(maze.PrintPathOverlay(res,'+', pathToFollow, false));
         }
 
-        private int GetDirectionOfEdge(Graph<Point, MazeNode2D, MazeEdge2D> graph, int indexFrom, int indexTo)
+        private int GetDirectionOfEdge(Graph<Point> graph, int indexFrom, int indexTo)
         {
             var nodeFromCoord = graph.Nodes[indexFrom];
             var nodeToCoord = graph.Nodes[indexTo];
@@ -179,7 +174,7 @@ namespace Graphex.Test
             }
         }
 
-        private void AddHorizontalConnections(Point coord, Graph<Point, MazeNode2D, MazeEdge2D> graph, int maxWidth)
+        private void AddHorizontalConnections(Point coord, Graph<Point> graph, int maxWidth)
         {
             if (coord.X > 0)
             {
@@ -222,8 +217,8 @@ namespace Graphex.Test
             var nodeA = maze.InternalGraph.GetNode(new Point(ax, ay));
             var nodeH = maze.InternalGraph.GetNode(new Point(hx, hy));
 
-            Assert.AreEqual('a', nodeA.Payload.NodeType);
-            Assert.AreEqual('h', nodeH.Payload.NodeType);
+            Assert.AreEqual('a', (char)nodeA.Payload);
+            Assert.AreEqual('h', (char)nodeH.Payload);
         }
 
         [Test]

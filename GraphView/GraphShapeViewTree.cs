@@ -15,7 +15,7 @@ namespace GraphView
     /// </summary>
     /// <typeparam name="TNodePayload">Payt</typeparam>
     /// <typeparam name="TEdgePayload"></typeparam>
-    public class GraphShapeViewTree<TNodeKey, TNodePayload, TEdgePayload> : GraphShapeBaseView<TNodeKey, TNodePayload, TEdgePayload>
+    public class GraphShapeViewTree<TNodeKey> : GraphShapeBaseView<TNodeKey>
             where TNodeKey : IEquatable<TNodeKey>
     {
 
@@ -57,12 +57,12 @@ namespace GraphView
             this.yScale = yScale;
         }
 
-        public override void AddNodes(Graph<TNodeKey, TNodePayload, TEdgePayload> graph)
+        public override void AddNodes(Graph<TNodeKey> graph)
         {
             //Ok we need BFS to calc all
         }
 
-        public override void AddEdges(Graph<TNodeKey, TNodePayload, TEdgePayload> graph)
+        public override void AddEdges(Graph<TNodeKey> graph)
         {
             //
         }

@@ -25,22 +25,22 @@ namespace WorldCitiesNet
         }
 
         
-        public static double CalcDistPoint<TNodePayloadType, TEdgePayloadType>(
-            Edge<Node<Point, TNodePayloadType, TEdgePayloadType>, TEdgePayloadType> edge, 
+        public static double CalcDistPoint(Edge<Point> edge,
             Func<int, int, int, int, int> distFunc)
         {
             var from = edge.From;
             var to = edge.To;
+
             return distFunc(from.Id.X, to.Id.X, from.Id.Y, to.Id.Y);
         }
 
 
         //Func<Edge<Node<TKeyNode, TNodePayload, TEdgePayload>, TEdgePayload>, double> distFunc
-        public static double CalcDistStation(Edge<Node<string,Station,Route>, Route> route)
+        public static double CalcDistStation(Edge<string> route)
         {
-            var start = route.From;
-            var stop = route.To;
-            return CalcDistInternal(start.Payload.Lon, start.Payload.Lat, stop.Payload.Lon, stop.Payload.Lat);
+            var start = (Station)route.From.Payload;
+            var stop = (Station)route.To.Payload;
+            return CalcDistInternal(start.Lon, start.Lat, stop.Lon, stop.Lat);
         }
 
         private static double DegToRad(double degrees)
@@ -48,9 +48,9 @@ namespace WorldCitiesNet
             return (Math.PI / 180) * degrees;
         }
 
-        public static Graph<string, City, Route> PrepareCityGraph()
+        public static Graph<string> PrepareCityGraph()
         {
-            var gr = new Graph<string, City, Route>();
+            var gr = new Graph<string>();
             var cities = LoadCities();
 
             foreach (var city in cities)
@@ -92,7 +92,7 @@ namespace WorldCitiesNet
             return gr;
         }
 
-        private static void CreateCrossJoindEdges(IEnumerable<City> cities, Graph<string, City, Route> gr)
+        private static void CreateCrossJoindEdges(IEnumerable<City> cities, Graph<string> gr)
         {
             foreach (var innerCity in cities)
             {

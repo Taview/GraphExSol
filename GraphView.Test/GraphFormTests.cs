@@ -14,7 +14,7 @@ namespace GraphView.Test
         [Ignore("This test is for Demo purposes only comment ignore attribute to proceed")]
         public void Demo2DGraphs()
         {
-            var graphView2D = new GraphShapeView2D<int, int>(new Point(20, 35), 60, 70);
+            var graphView2D = new GraphShapeView2D(new Point(20, 35), 60, 70);
             graphView2D.NodeMakeSquaredForm = true;
             graphView2D.NodeTextPadding = 5;
             graphView2D.NodeTextFont = new Font("Tahoma",8);
@@ -33,7 +33,7 @@ namespace GraphView.Test
             myGraphViewForm.BackColor = Color.Black;
 
 
-            var graph = new Graph<Point, int, int>();
+            var graph = new Graph<Point>();
 
             int width = 69;
             int height = 13;
@@ -140,7 +140,7 @@ namespace GraphView.Test
 
             //Initilize View
 
-            var graphView2D = new GraphShapeView2D<MazeNode2D, MazeEdge2D>(new Point(100, 200), 60, 70);
+            var graphView2D = new GraphShapeView2D(new Point(100, 200), 60, 70);
             graphView2D.InverseYAxisGraph = true;
             graphView2D.NodeMakeSquaredForm = true;
             graphView2D.NodeTextPadding = 5;
@@ -202,7 +202,7 @@ namespace GraphView.Test
             }
         }
 
-        private void AddHorizontalConnections(Point coord, Graph<Point, MazeNode2D, MazeEdge2D> graph, int maxWidth)
+        private void AddHorizontalConnections(Point coord, Graph<Point> graph, int maxWidth)
         {
             if (coord.X > 0)
             {
@@ -221,7 +221,7 @@ namespace GraphView.Test
             }
         }
 
-        private int GetDirectionOfEdge(Graph<Point, MazeNode2D, MazeEdge2D> graph, int indexFrom, int indexTo)
+        private int GetDirectionOfEdge(Graph<Point> graph, int indexFrom, int indexTo)
         {
             var nodeFromCoord = graph.Nodes[indexFrom];
             var nodeToCoord = graph.Nodes[indexTo];
@@ -240,9 +240,7 @@ namespace GraphView.Test
             return 0;
         }
 
-        public static double CalcDistPoint<TNodePayloadType, TEdgePayloadType>(
-        Edge<Node<Point, TNodePayloadType, TEdgePayloadType>, TEdgePayloadType> edge,
-        Func<int, int, int, int, int> distFunc)
+        public static double CalcDistPoint(Edge<Point> edge, Func<int, int, int, int, int> distFunc)
         {
             var from = edge.From;
             var to = edge.To;

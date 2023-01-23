@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GraphView
 {
-    public abstract class GraphShapeBaseView<TNodeKey, TNodePayload, TEdgePayload> : IGraphBase 
+    public abstract class GraphShapeBaseView<TNodeKey> : IGraphBase 
             where TNodeKey : IEquatable<TNodeKey>
     {
         public List<NodeShapeView> NodeViews;
@@ -19,7 +19,7 @@ namespace GraphView
 
         Random r = new Random();
 
-        public void Init(Graph<TNodeKey, TNodePayload, TEdgePayload> graph)
+        public void Init(Graph<TNodeKey> graph)
         {
             // Add some nodes to the graph
             this.NodeViews = new List<NodeShapeView>();
@@ -35,9 +35,9 @@ namespace GraphView
             return new Size(PrefferedWidth, PrefferedHeight);
         }
 
-        public abstract void AddNodes(Graph<TNodeKey, TNodePayload, TEdgePayload> graph);
+        public abstract void AddNodes(Graph<TNodeKey> graph);
 
-        public abstract void AddEdges(Graph<TNodeKey, TNodePayload, TEdgePayload> graph);
+        public abstract void AddEdges(Graph<TNodeKey> graph);
 
 
         public void Render(object sender, PaintEventArgs e)

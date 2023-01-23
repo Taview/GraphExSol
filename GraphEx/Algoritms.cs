@@ -8,10 +8,10 @@ namespace GraphEx
 {
     public static class Algorithms
     {
-        public static double[] FindShortestPathDejikstraFromNode<TKeyNode, TNodePayload, TEdgePayload>(
+        public static double[] FindShortestPathDejikstraFromNode<TKeyNode>(
             int startNodeIndex,
-            Graph<TKeyNode, TNodePayload, TEdgePayload> graph,
-            Func<Edge<Node<TKeyNode, TNodePayload, TEdgePayload>, TEdgePayload>, double> distFunc,
+            Graph<TKeyNode> graph,
+            Func<Edge<TKeyNode>, double> distFunc,
             out int[] path)
             where TKeyNode : IEquatable<TKeyNode>
         {
@@ -77,12 +77,12 @@ namespace GraphEx
         }
 
 
-        public static double[] FindShortestPathAStarFromNode<TKeyNode, TNodePayload, TEdgePayload>(
+        public static double[] FindShortestPathAStarFromNode<TKeyNode>(
             int startNodeIndex,
             int endNodeIndex,
-            Graph<TKeyNode, TNodePayload, TEdgePayload> graph,
-            Func<Edge<Node<TKeyNode, TNodePayload, TEdgePayload>, TEdgePayload>, double> distFunc,
-            Func<Edge<Node<TKeyNode, TNodePayload, TEdgePayload>, TEdgePayload>, double> finalDistTargetFunc,
+            Graph<TKeyNode> graph,
+            Func<Edge<TKeyNode>, double> distFunc,
+            Func<Edge<TKeyNode>, double> finalDistTargetFunc,
             out int[] path)
             where TKeyNode : IEquatable<TKeyNode>
         {
@@ -129,7 +129,7 @@ namespace GraphEx
                         path[toNodeIndex] = currentFromNodeIndex;
 
                         //Create new EdgeToTarget to estimate its weight/dist foe heuristics
-                        var targetEdge = new Edge<Node<TKeyNode, TNodePayload, TEdgePayload>, TEdgePayload>() { From = _nodeList[toNodeIndex], To = _nodeList[endNodeIndex] };
+                        var targetEdge = new Edge<TKeyNode> () { From = _nodeList[toNodeIndex], To = _nodeList[endNodeIndex]};
                         double heuDist = 0;
                         heuDist = distances[toNodeIndex] + finalDistTargetFunc(targetEdge);
                         priorityQueue.Enqueue(toNodeIndex, heuDist);
@@ -161,14 +161,14 @@ namespace GraphEx
             return distances;
         }
 
-        public static double[] FindShortestPathAStarFromNodeWithTurnCost<TKeyNode, TNodePayload, TEdgePayload>(
+        public static double[] FindShortestPathAStarFromNodeWithTurnCost<TKeyNode>(
             int startNodeIndex,
             int endNodeIndex,
-            Graph<TKeyNode, TNodePayload, TEdgePayload> graph,
-            Func<Graph<TKeyNode, TNodePayload, TEdgePayload>, int, int, int> getDirFunct,
+            Graph<TKeyNode> graph,
+            Func<Graph<TKeyNode>, int, int, int> getDirFunct,
             Func<int, int, int> dirPenaltyFunct,
-            Func<Edge<Node<TKeyNode, TNodePayload, TEdgePayload>, TEdgePayload>, double> distFunc,
-            Func<Edge<Node<TKeyNode, TNodePayload, TEdgePayload>, TEdgePayload>, double> finalDistTargetFunc,
+            Func<Edge<TKeyNode>, double> distFunc,
+            Func<Edge<TKeyNode>, double> finalDistTargetFunc,
             out int[] directions,
             out int[] path)
             where TKeyNode : IEquatable<TKeyNode>
@@ -238,7 +238,7 @@ namespace GraphEx
                         path[toNodeIndex] = currentFromNodeIndex;
 
                         //Create new EdgeToTarget to estimate its weight/dist foe heuristics
-                        var targetEdge = new Edge<Node<TKeyNode, TNodePayload, TEdgePayload>, TEdgePayload>() { From = _nodeList[toNodeIndex], To = _nodeList[endNodeIndex] };
+                        var targetEdge = new Edge<TKeyNode>() { From = _nodeList[toNodeIndex], To = _nodeList[endNodeIndex] };
                         double heuDist = 0;
                         heuDist = distances[toNodeIndex] + finalDistTargetFunc(targetEdge);
                         priorityQueue.Enqueue(toNodeIndex, heuDist);

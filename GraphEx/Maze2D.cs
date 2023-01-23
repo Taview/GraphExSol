@@ -22,9 +22,9 @@ namespace GraphEx
 
     public class MazeEdge2D
     {
-        public Node<Point, MazeNode2D, MazeEdge2D> From;
+        public Node<Point> From;
 
-        public Node<Point, MazeNode2D, MazeEdge2D> To;
+        public Node<Point> To;
         public override string ToString()
         {
             return $"MazeEdge2D([{From.Id.X},{From.Id.Y}] - [{To.Id.X},{To.Id.Y}])";
@@ -62,7 +62,7 @@ namespace GraphEx
         public bool InverseXAxisGraph;
         public bool InverseYAxisGraph;
         public bool IncludeDiagColRow;
-        public Graph<Point, MazeNode2D, MazeEdge2D> InternalGraph;
+        public Graph<Point> InternalGraph;
         IList<string> _mazeRows2D;
 
         public event EventHandler<MazeNodeUpdateEventArgs> NodeAdded;
@@ -142,7 +142,7 @@ namespace GraphEx
             MazeWidth = MazeWidth - MazeFirstColIndex;
             MazeHeight = MazeHeight - MazeFirstRowIndex;
 
-            InternalGraph = new Graph<Point, MazeNode2D, MazeEdge2D>();
+            InternalGraph = new Graph<Point>();
 
             for (int yRow = 0; yRow < MazeHeight; yRow++)
                 for (int xCol = 0; xCol < MazeWidth; xCol++)
@@ -154,7 +154,7 @@ namespace GraphEx
 
                     newNode.Payload = new MazeNode2D();
                     newNode.Id = newNode.Id;
-                    newNode.Payload.NodeType = nodeType;
+                    newNode.Payload = nodeType;
                     
                 }
 
@@ -166,7 +166,7 @@ namespace GraphEx
                     {
                          UpdateType = UpdateType.Create,
                          Coord = coord,
-                         NodeType = InternalGraph.GetNode(coord).Payload.NodeType
+                         NodeType = (char)InternalGraph.GetNode(coord).Payload
                     });
                 }
         }
@@ -222,14 +222,14 @@ namespace GraphEx
             var newNode = InternalGraph.AddNode(new Point(xCol, yRow));
             newNode.Id = new Point(xCol, yRow);
             newNode.Payload = new MazeNode2D();
-            newNode.Payload.NodeType = mazeType;
+            newNode.Payload = mazeType;
 
             var coord2 = new Point(xCol, yRow);
             OnNodeUpdated(new MazeNodeUpdateEventArgs()
             {
                 UpdateType = UpdateType.Create,
                 Coord = coord2,
-                NodeType = InternalGraph.GetNode(coord).Payload.NodeType
+                NodeType = (char)InternalGraph.GetNode(coord).Payload
             });
         }
 
@@ -262,7 +262,7 @@ namespace GraphEx
             return sb.ToString();
         }
 
-        public string PrintPathOverlay(string baseStr, char overlayChar, IEnumerable<Node<Point, MazeNode2D, MazeEdge2D>> points, bool extraSpaces = true, bool showDiagInfo = true)
+        public string PrintPathOverlay(string baseStr, char overlayChar, IEnumerable<Node<Point>> points, bool extraSpaces = true, bool showDiagInfo = true)
         {
             int startIndexRow = showDiagInfo ? 0 : MazeFirstRowIndex;
             int startIndexCol = showDiagInfo ? 0 : MazeFirstColIndex;
