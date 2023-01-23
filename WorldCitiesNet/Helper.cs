@@ -24,16 +24,6 @@ namespace WorldCitiesNet
             return Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2)) * 6371;
         }
 
-        
-        public static double CalcDistPoint(Edge<Point> edge,
-            Func<int, int, int, int, int> distFunc)
-        {
-            var from = edge.From;
-            var to = edge.To;
-
-            return distFunc(from.Id.X, to.Id.X, from.Id.Y, to.Id.Y);
-        }
-
 
         //Func<Edge<Node<TKeyNode, TNodePayload, TEdgePayload>, TEdgePayload>, double> distFunc
         public static double CalcDistStation(Edge<string> route)

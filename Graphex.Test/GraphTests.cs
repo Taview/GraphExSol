@@ -371,7 +371,7 @@ namespace Graphex.Test
             var shortestDistanceIndexes = Algorithms.FindShortestPathDejikstraFromNode(
                 startNodeIndex, 
                 gr, 
-                edge => Helper.CalcDistPoint(edge, Heuristics.ManhattanDistance), 
+                edge => GraphUtils.GetDistance(edge, Heuristics.ManhattanDistance), 
                 out shortestPathIndexes);
 
             dejikstraWatchTime.Stop();
@@ -419,8 +419,8 @@ namespace Graphex.Test
                 startNodeIndex,
                 endNodeIndex,
                 gr,
-                edge => Helper.CalcDistPoint(edge, Heuristics.ManhattanDistance),
-                edge => Helper.CalcDistPoint(edge, Heuristics.ManhattanDistance),
+                edge => GraphUtils.GetDistance(edge, Heuristics.ManhattanDistance),
+                edge => GraphUtils.GetDistance(edge, Heuristics.ManhattanDistance),
                 out shortestPathIndexes);
 
             astartWatchTimer.Stop();

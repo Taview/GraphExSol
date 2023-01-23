@@ -58,7 +58,7 @@ namespace Graphex.Test
                                 startNodeIndex, endNodeIndex, maze.InternalGraph,
                                 GetDirectionOfEdge,
                                 GetTurnPenalty,
-                                route => Helper.CalcDistPoint(route, Heuristics.ManhattanDistance),
+                                route => GraphUtils.GetDistance(route, Heuristics.ManhattanDistance),
                                 route => 0,
                                 out directions,
                                 out shortestIndexes);
